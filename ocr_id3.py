@@ -52,7 +52,5 @@ print "New Title: ", audiofile["title"]
 print "New Artist: ", audiofile["artist"]
 print "New Album: ", audiofile["album"]
 print "New Album Artist: ", audiofile["performer"]
-#remixed_game
-#audiofile.tag.album
 
 audiofile.save()
