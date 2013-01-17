@@ -1,27 +1,27 @@
 import eyed3
+from mutagen.easyid3 import EasyID3
 
 #filename = 'C:\Projects\PyID3ocr\EarthBound_Practicing_Retrocognition_OC_ReMix.mp3'
 filename = 'C:\Projects\PyID3ocr\Metal_Gear_Uh_Oh_The_Beat_Have_Started_to_Move_OC_ReMix.mp3'
 
-audiofile = eyed3.load(filename)
-album_artist = audiofile.tag.artist
-old_title = audiofile.tag.title
+audiofile = EasyID3(filename)
+album_artist = audiofile["artist"]
+old_title = audiofile["title"]
 
-old_title_list = old_title.split() #Convert old_title to list for easy word access (as opposed to character)
-
+old_title_split = old_title[0].split() #Convert old_title to list for easy word access (as opposed to character)
 new_title = ''
 new_album = ''
 
 done = False
 title_started = False
 
-# vvvvv  Thank you stack overflow  vvvvv
+#vvvvv  Thank you stack overflow  vvvvv
 def kill_char(string, n): # n = position of which character you want to remove 
-    begin = string[:n]    # from beginning to n (n not included)
-    end = string[n+1:]    # n+1 through end of string
-    return begin + end
+	begin = string[:n]    # from beginning to n (n not included)
+	end = string[n+1:]    # n+1 through end of string
+	return begin + end
 
-for word in old_title_list:
+for word in old_title_split:
 	if title_started == False:
 		if word[0] == "'":  				#IF the first character is an apostrophe
 			title_started = True			#	It's part of the title
@@ -44,14 +44,15 @@ for word in old_title_list:
 				new_title += word			#If it's not the last word in title, add it"
 			
 #Reassign ID3 Tag
-audiofile.tag.title = new_title
-audiofile.tag.artist = u"OC ReMix"
-audiofile.tag.album = new_album
-audiofile.tag.albumartist = album_artist
-print "New Title: ", new_title
-print "New Album: ", new_album
-print "New Album Artist: ", audiofile.tag.albumartist
+audiofile["title"] = new_title
+audiofile["artist"] = u"OC ReMix"
+audiofile["album"] = new_album
+audiofile["performer"] = album_artist
+print "New Title: ", audiofile["title"]
+print "New Artist: ", audiofile["artist"]
+print "New Album: ", audiofile["album"]
+print "New Album Artist: ", audiofile["performer"]
 #remixed_game
 #audiofile.tag.album
 
-audiofile.tag.save()
+audiofile.save()
