@@ -37,7 +37,7 @@ for word in old_title_split:
 			
 			if word[len(word) - 1] == "'":
 				done = True
-				new_title += kill_char(word, len(word) - 1)		#Remove end "'"
+				new_title += kill_char(word, len(word) - 1)		#Remove end "'" and add to title
 				new_title = kill_char(new_title, 0)				#Remove Beginning "'"
 			
 			else:
