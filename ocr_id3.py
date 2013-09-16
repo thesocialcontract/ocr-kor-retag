@@ -1,56 +1,46 @@
-import eyed3
 from mutagen.easyid3 import EasyID3
+import tag_processor
+import sys
+import os
+import logging
 
-#filename = 'C:\Projects\PyID3ocr\EarthBound_Practicing_Retrocognition_OC_ReMix.mp3'
-filename = 'C:\Projects\PyID3ocr\Metal_Gear_Uh_Oh_The_Beat_Have_Started_to_Move_OC_ReMix.mp3'
+#	TODO:
+#			Add affected mp3s log
+#			Accept console commands
+#				Accept different directories
 
-audiofile = EasyID3(filename)
-album_artist = audiofile["artist"]
-old_title = audiofile["title"]
+current_path = "C:\Users\Koriantor\Desktop\TEST"
 
-old_title_split = old_title[0].split() #Convert old_title to list for easy word access (as opposed to character)
-new_title = ''
-new_album = ''
-
-done = False
-title_started = False
-
-#vvvvv  Thank you stack overflow  vvvvv
-def kill_char(string, n): # n = position of which character you want to remove 
-	begin = string[:n]    # from beginning to n (n not included)
-	end = string[n+1:]    # n+1 through end of string
-	return begin + end
-
-for word in old_title_split:
-	if title_started == False:
-		if word[0] == "'":  				#IF the first character is an apostrophe
-			title_started = True			#	It's part of the title
-			new_title += word
-			new_album = kill_char(new_album, len(new_album) - 1) #Remove the extra whitespace at the end of the album
-		else:								#ELSE
-			new_album += word				#	It's part of the game's name.  Add it to the game.
-			new_album += ' '				#	Add spaces between word.  
-		
-	else:
-		if done == False:
-			new_title += ' '				#Add whitespace between words
-			
-			if word[len(word) - 1] == "'":
-				done = True
-				new_title += kill_char(word, len(word) - 1)		#Remove end "'" and add to title
-				new_title = kill_char(new_title, 0)				#Remove Beginning "'"
-			
-			else:
-				new_title += word			#If it's not the last word in title, add it"
-			
-#Reassign ID3 Tag
-audiofile["title"] = new_title
-audiofile["artist"] = u"OC ReMix"
-audiofile["album"] = new_album
-audiofile["performer"] = album_artist
-print "New Title: ", audiofile["title"]
-print "New Artist: ", audiofile["artist"]
-print "New Album: ", audiofile["album"]
-print "New Album Artist: ", audiofile["performer"]
-
-audiofile.save()
+def isProcessed(audiofile):
+	'''
+	Checks to see if the given mp3 file is an OC ReMix, and whether or not
+	the OC ReMix has the new tag or default tag.
+	'''
+	artist = audiofile["artist"]
+	if audiofile["artist"] == [u'OC ReMix']:	# An already processed OC ReMix MP3 will have OC ReMix as the artist
+		return True									# If OC ReMix is already the artist, it's already processed, so we skip processing
+	else:										# If the artist isn't "OC ReMix", we need to figure out if it's a remix that needs processed
+		title = audiofile["title"]				# 	or if it's some other type of MP3.
+		title_split = title[0].split()				#	Split the title into separate words for easy checking
+		for n in title_split:						# The default remix labeling has "OC ReMix" at the end of every title
+			if n == "ReMix":						# We scan the title to see if it contains "OC ReMix" at the end
+				return False						# If it does, we need to process this remix
+		return True								# If OC ReMix isn't in the title, it's not a remix and can be skipped
+				
+def main():
+	''' TODO: Write Documenation '''
+	#logging.basicConfig(filename='modified.log',level=logging.DEBUG)	# Set up logfile for keeping track of modified files
+	#logging.info("Modified Files:\n")
+	
+	for root, dirs, files in os.walk(current_path):						# Scan for MP3 files in given directory and subdirectories
+		for n in files:													# Scans files in the directory for mp3s
+			if n.endswith('.mp3'):										# If it finds an mp3,
+				filepath = root + "\\" + n								# Grab the filepath
+				audiofile = EasyID3(filepath)							# Make ID3 tag object
+				if !isProcessed(audiofile):								# If the MP3 isn't already processed,
+					tag_processor.processMP3(audiofile, filepath)			# Process it and save adjustments
+					#logging.info(filepath)									# Add Filename to logfile
+	return
+	
+if __name__ == "__main__":
+	sys.exit(main())
