@@ -13,7 +13,6 @@ def killChar(string, n): # n = position of which character you want to remove
 	
 def processMP3(audiofile, filepath):
 	''' 
-	TODO: Write Documentation 
 	This function takes a file and changes the default tagging to my tagging.
 
 	OCR's default tagging:

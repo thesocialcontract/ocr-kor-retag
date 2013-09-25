@@ -3,6 +3,7 @@ import tag_processor
 import sys
 import os
 import logging
+import argparse
 
 #	TODO:
 #			Add affected mp3s log
@@ -28,18 +29,30 @@ def isProcessed(audiofile):
 		return True								# If OC ReMix isn't in the title, it's not a remix and can be skipped
 				
 def main():
-	''' TODO: Write Documenation '''
-	#logging.basicConfig(filename='modified.log',level=logging.DEBUG)	# Set up logfile for keeping track of modified files
-	#logging.info("Modified Files:\n")
+	''' 
+	OC ReMix Tagger takes a filepath as an commandline argument, creates a logfile,
+	scans the given directory and modifies any unmodified OC ReMix MP3 files it finds.
+	'''
+	
+	# Command Line Arugment Handling
+		# NOTE: If you type your filename with a \ at the end, it will break
+		# e.g. python ocr_id3.py "c:\foo\" will make it shout and complain
+	parser = argparse.ArgumentParser() 			
+	parser.add_argument("filepath", help = "desired filepath to scan (be sure to use quotation marks!)")
+	args = parser.parse_args()
+	
+	current_path = args.filepath
+	# Set up logfile for keeping track of modified files
+	logging.basicConfig(filename=(current_path + '\\modified.log'),level=logging.DEBUG)
 	
 	for root, dirs, files in os.walk(current_path):						# Scan for MP3 files in given directory and subdirectories
 		for n in files:													# Scans files in the directory for mp3s
 			if n.endswith('.mp3'):										# If it finds an mp3,
 				filepath = root + "\\" + n								# Grab the filepath
 				audiofile = EasyID3(filepath)							# Make ID3 tag object
-				if !isProcessed(audiofile):								# If the MP3 isn't already processed,
+				if not isProcessed(audiofile):								# If the MP3 isn't already processed,
 					tag_processor.processMP3(audiofile, filepath)			# Process it and save adjustments
-					#logging.info(filepath)									# Add Filename to logfile
+					logging.info(filepath)									# Add Filename to logfile
 	return
 	
 if __name__ == "__main__":
