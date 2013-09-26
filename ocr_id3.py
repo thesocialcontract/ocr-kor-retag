@@ -51,7 +51,7 @@ def main():
 				filepath = root + "\\" + n								# Grab the filepath
 				audiofile = EasyID3(filepath)							# Make ID3 tag object
 				if not isProcessed(audiofile):								# If the MP3 isn't already processed,
-					tag_processor.processMP3(audiofile, filepath)			# Process it and save adjustments
+					tag_processor.processMP3(audiofile)						# Process it and save adjustments
 					logging.info(filepath)									# Add Filename to logfile
 	return
 	
