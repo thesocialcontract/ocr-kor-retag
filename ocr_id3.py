@@ -5,13 +5,6 @@ import os
 import logging
 import argparse
 
-#	TODO:
-#			Add affected mp3s log
-#			Accept console commands
-#				Accept different directories
-
-current_path = "C:\Users\Koriantor\Desktop\TEST"
-
 def isProcessed(audiofile):
 	'''
 	Checks to see if the given mp3 file is an OC ReMix, and whether or not
@@ -38,10 +31,13 @@ def main():
 		# NOTE: If you type your filename with a \ at the end, it will break
 		# e.g. python ocr_id3.py "c:\foo\" will make it shout and complain
 	parser = argparse.ArgumentParser() 			
-	parser.add_argument("filepath", help = "desired filepath to scan (be sure to use quotation marks!)")
+	parser.add_argument("--filepath", help = "desired filepath to scan (be sure to use quotation marks!)")
 	args = parser.parse_args()
 	
-	current_path = args.filepath
+	if args.filepath:
+		current_path = args.filepath
+	else:
+		current_path = os.getcwd()
 	# Set up logfile for keeping track of modified files
 	logging.basicConfig(filename=(current_path + '\\modified.log'),level=logging.DEBUG)
 	
@@ -51,7 +47,7 @@ def main():
 				filepath = root + "\\" + n								# Grab the filepath
 				audiofile = EasyID3(filepath)							# Make ID3 tag object
 				if not isProcessed(audiofile):								# If the MP3 isn't already processed,
-					tag_processor.processMP3(audiofile, filepath)			# Process it and save adjustments
+					tag_processor.processMP3(audiofile)						# Process it and save adjustments
 					logging.info(filepath)									# Add Filename to logfile
 	return
 	

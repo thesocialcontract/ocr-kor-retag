@@ -1,9 +1,5 @@
 from mutagen.easyid3 import EasyID3
 
-# TODO: Write logfile
-#		Test
-
-
 #vvvvv  Thank you stack overflow  vvvvv
 def killChar(string, n): # n = position of which character you want to remove 
 	begin = string[:n]    # from beginning to n (n not included)
@@ -11,7 +7,7 @@ def killChar(string, n): # n = position of which character you want to remove
 	return begin + end
 
 	
-def processMP3(audiofile, filepath):
+def processMP3(audiofile):
 	''' 
 	This function takes a file and changes the default tagging to my tagging.
 
